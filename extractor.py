@@ -15,7 +15,13 @@ for file in os.listdir(directory):
 		sentences = sent_tokenize(text)
 		news.append(sentences)
 
-def extract(keyword, sentences):
+def convert(files_raw_data):
+	files_raw_data = files_raw_data.replace("\n", " ")
+	files_raw_data = files_raw_data.lower()
+	sentences = sent_tokenize(files_raw_data)
+	return sentences
+
+def extractor(keyword, sentences):
 
 	informations = []
 	for sentence in sentences:
@@ -45,7 +51,7 @@ def results(keyword):
 	informations = []
 
 	for sentences in news:
-		informations += extract(keyword, sentences)
+		informations += extractor(keyword, sentences)
 
 	for information in informations:
 		print(create_results(information))

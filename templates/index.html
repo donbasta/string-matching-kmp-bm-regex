@@ -9,16 +9,65 @@
     <h1 style="text-align: center">Info Extractor</h1>
 
     <div class="form">
-        <form action="/" method="POST">
-            <input type="text" name="keyword" id="keyword">
-            <input type="submit" value="Set Keyword">
+        <form action="/set_keyword" method="POST">
+            <input type="text" name="keyword" id="keyword" />
+            <input type="submit" value="Set Keyword" />
         </form>
         <br>
         {% if keyword %}
             <p> Keyword: {{ keyword }} <p>
         {% endif %}
+
+        <form action = "/uploader" method = "POST" enctype = "multipart/form-data">
+            <input type = "file" name = "file" />
+            <input type = "submit" value="Add File" />
+        </form> 
+        {% if files|length > 0 %}
+        <table>
+            <tr>
+                <td>Nama File</td>
+            </tr>
+            {% for file in files %}
+            <!-- create table for showing the files being uploaded -->
+            <!-- may as well create delete button too-->
+            <tr>
+                <td>{{ file }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p>No files uploaded, press the button above to upload files</p>
+        {% endif %}
+
+        <form action = "/extract">
+            <input type = "submit" value="Extract" />
+        </form>
+
+        {% if informations|length > 0 %}
+        <table>
+            <tr>
+                <td>Keyword</td>
+                <td>Nama File</td>
+                <td>Jumlah</td>
+                <td>Waktu</td>
+                <td>Kalimat</td>
+            </tr>
+            {% for info in informations %}
+            <!-- create table for showing information -->
+                <tr>
+                    <td>{{ info[0] }}</td>
+                    <td>Nama File</td>
+                    <td>{{ info[2] }}</td>
+                    <td>{{ info[1] }}</td>
+                    <td>{{ info[3] }}</td>
+                </tr>
+            {% endfor %}
+        </table>>
+        {% else %}
+            <p>No keyword found in all the texts uploaded.</p>
+        {% endif %}
+
     </div>
-
-
+    
 </div>
 {% endblock %}
