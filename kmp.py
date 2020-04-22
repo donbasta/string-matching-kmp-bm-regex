@@ -1,5 +1,3 @@
-
-
 def prefix_function(pattern):
 	length = len(pattern)
 	prefix = [0 for i in range(length)]

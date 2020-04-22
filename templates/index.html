@@ -9,65 +9,109 @@
     <h1 style="text-align: center">Info Extractor</h1>
 
     <div class="form">
-        <form action="/set_keyword" method="POST">
-            <input type="text" name="keyword" id="keyword" />
-            <input type="submit" value="Set Keyword" />
-        </form>
+        <h5 class="form-title text-center">Keyword</h5>
+        <div class="form-label-group">
+            <form action="/set_keyword" method="POST">
+                <input type="text" name="keyword" id="keyword" />
+                <input class="btn" type="submit" value="Set Keyword" />
+            </form>
+        </div>
         <br>
         {% if keyword %}
+        <div class="message">
             <p> Keyword: {{ keyword }} <p>
+        </div>
         {% endif %}
+    </div>
 
-        <form action = "/uploader" method = "POST" enctype = "multipart/form-data">
-            <input type = "file" name = "file" />
-            <input type = "submit" value="Add File" />
-        </form> 
+    <div class="form">
+        <h5 class="form-title text-center">Upload Files</h5>
+        <div class="form-label-group">
+            <form action = "/uploader" method = "POST" enctype = "multipart/form-data">
+                <input class = "message" type = "file" name = "file" />
+                <input class = "btn" type = "submit" value="Add File" />
+            </form> 
+        </div>
+
         {% if files|length > 0 %}
-        <table>
-            <tr>
-                <td>Nama File</td>
-            </tr>
             {% for file in files %}
             <!-- create table for showing the files being uploaded -->
             <!-- may as well create delete button too-->
-            <tr>
-                <td>{{ file }}</td>
-            </tr>
+            <div class="message">
+                <p>{{ file }}</p>
+            </div>
             {% endfor %}
         </table>
         {% else %}
+        <div class="message">
             <p>No files uploaded, press the button above to upload files</p>
+        </div>
         {% endif %}
 
-        <form action = "/extract">
-            <input type = "submit" value="Extract" />
-        </form>
+    </div>
+
+    <div class="form">
+        <h5 class="form-title text-center">String Matching Algorithm</h5>
+        <div class="form-label-group">
+            <form action = "/picker" method = "POST">
+                <div class="picker">
+                    <input type="radio" name="options" id="option1" value="kmp"> Knuth-Morris-Pratt (KMP) </input><br>
+                    <input type="radio" name="options" id="option2" value="bm"> Boyer-Moore </input><br>
+                    <input type="radio" name="options" id="option3" value="regex"> Regular Expression (Regex) </input><br>
+                </div>
+                <input class = "btn" type = "submit" value="Choose" />
+            </form>
+        </div>
+        
+        {% if algorithm %}
+        <div class="message">
+            <p> You choose {{ algorithm }} </p>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="form">
+        <h5 class="form-title text-center">Extract Information</h5>
+        <div class="form-label-group">
+            <form action = "/extract">
+                <input class="btn" type = "submit" value="Extract" />
+            </form>
+        </div>
 
         {% if informations|length > 0 %}
-        <table>
-            <tr>
-                <td>Keyword</td>
-                <td>Nama File</td>
-                <td>Jumlah</td>
-                <td>Waktu</td>
-                <td>Kalimat</td>
-            </tr>
+        <table class="table-fill">
+            <thead>
+                <tr>
+                    <th>Keyword</th>
+                    <th>Nama File</th>
+                    <th>Jumlah</th>
+                    <th>Waktu</th>
+                    <th>Kalimat</th>
+                </tr>
+            </thead>
+            <tbody class="table-hover">
             {% for info in informations %}
             <!-- create table for showing information -->
                 <tr>
                     <td>{{ info[0] }}</td>
-                    <td>Nama File</td>
-                    <td>{{ info[2] }}</td>
                     <td>{{ info[1] }}</td>
                     <td>{{ info[3] }}</td>
+                    <td>{{ info[2] }}</td>
+                    <td>{{ info[4] }}</td>
                 </tr>
             {% endfor %}
-        </table>>
+            </tbody>
+        </table>
         {% else %}
-            <p>No keyword found in all the texts uploaded.</p>
+            {% if query %}
+            <div class="message">
+                <p>No keyword "{{ query }}" found in all the texts uploaded.</p>
+            </div>
+            {% endif %}
         {% endif %}
 
     </div>
-    
+
 </div>
 {% endblock %}

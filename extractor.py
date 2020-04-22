@@ -5,62 +5,53 @@ import re
 from kmp import kmp
 from boyer_moore import boyer_moore
 
-directory = os.getcwd() + '/textfile'
-news = []
-
-for file in os.listdir(directory):
-	with open('/'.join((directory,file)), "r") as textfile: 
-		text = textfile.read().replace("\n", " ")
-		text = text.lower()
-		sentences = sent_tokenize(text)
-		news.append(sentences)
-
 def convert(files_raw_data):
+	
 	files_raw_data = files_raw_data.replace("\n", " ")
 	files_raw_data = files_raw_data.lower()
 	sentences = sent_tokenize(files_raw_data)
 	return sentences
 
-def extractor(keyword, sentences):
+def extractor(keyword, sentences, option):
 
 	informations = []
-	for sentence in sentences:
+	for sentence in sentences[1]:
 		# bisa diganti dengan regex ataupun boyermoore sesuai pilihan nantinya
-		positions = kmp(keyword, sentence)
+		if option == 'kmp':
+			positions = kmp(keyword, sentence)
+		elif option == 'bm':
+			positions = boyer_moore(keyword, sentence)
+		elif option == 'regex':
+			positions = [m.start(0) for m in re.finditer(keyword, sentence)]
 		if positions:
 			time = find_time(sentence)
+			if len(time) == 0:
+				for other_sentence in sentences[1]:
+					time = find_time(other_sentence)
+					if time:
+						break
 			amount = find_amount_info(sentence)
-			informations.append([keyword, time, amount, sentence])
+			closest_amount = ''
+			if amount:
+				closest_amount = amount[0][1]
+				if len(amount) > 1:
+					# find the closest one with the keyword
+					minimal = len(sentence)
+					for amount_candidate in amount:
+						if abs(amount_candidate[0] - positions[0]) < minimal:
+							closest_amount = amount_candidate[1]
+							minimal = abs(amount_candidate[0] - positions[0])
+			informations.append([keyword, sentences[0], time[0], closest_amount, sentence])
 
 	return informations
 
 def find_time(sentence):
-	time_pattern = re.compile(r"[0-9]{2}[-/][0-9]{2}[-/][0-9]{2,4}")
+
+	#currently only support date formatting
+	time_pattern = re.compile(r"[0-9]{1,2}[-/][0-9]{1,2}[-/][0-9]{2,4}")
 	times = time_pattern.findall(sentence)
 	return times
 
 def find_amount_info(sentence):
-	amounts = re.findall(r"[0-9]+", sentence)
+	amounts = [(m.start(0),m.group()) for m in re.finditer(r"[0-9]+\.*[0-9]*", sentence)]
 	return amounts
-
-def create_results(info):
-	return f"Keyword: {info[0]}\nHasil Ekstraksi Informasi:\nJumlah: {info[2]}\nWaktu: {info[1]}\n{info[3]}"
-
-def results(keyword):
-
-	informations = []
-
-	for sentences in news:
-		informations += extractor(keyword, sentences)
-
-	for information in informations:
-		print(create_results(information))
-
-if __name__ == "__main__":
-	keyword = input()
-	results(keyword.lower())
-
-
-
-
-
