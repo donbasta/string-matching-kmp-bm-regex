@@ -1,5 +1,4 @@
 from nltk import sent_tokenize
-import assets
 import os
 import re
 from kmp import kmp
